@@ -12,3 +12,4 @@ target/
 .project
 logs/
 Servers/
+/build/
