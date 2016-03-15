@@ -16,6 +16,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +33,18 @@ public final class DatabaseHelper {
 
 	private static final Logger LOG = LogManager.getLogger(DatabaseHelper.class) ;
 	
+	/**
+	 * AbstractListHandler -- 返回多行List的抽象类
+	 * ArrayHandler --  返回一行的Object[]
+	 * ArrayListHandler -- 返回List，每行是Object[]
+	 * BeanHandler -- 返回第一个Bean对象
+	 * BeanListHandler -- 返回List，每行是Bean
+	 * ColumnListHandler -- 返回一列的List
+	 * KeyedHandler -- 返回Map，具体见代码
+	 * MapHandler -- 返回单个Map
+	 * MapListHandler -- 返回List，每行是Map
+	 * ScalarHandler -- 返回列的头一个值
+	 */
 	private static final QueryRunner QUERY_RUNNER ;
 	
 	private static final ThreadLocal<Connection> CONNECTION_HOLDER ;
@@ -135,7 +148,7 @@ public final class DatabaseHelper {
 		String result ;
 		try {
 			Connection conn = getConnection() ;
-			result = QUERY_RUNNER.query(conn, sql, null, params) ;
+			result = QUERY_RUNNER.query(conn, sql, new ScalarHandler<String>(), params) ;
 		} catch (Exception e) {
 			LOG.error("execute query failure", e);
 			throw new RuntimeException(e) ;
